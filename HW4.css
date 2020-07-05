@@ -1,0 +1,37 @@
+body{margin: 0; padding:0;background-image: url("../StarWars/images/starwars.jpg")}
+#top{width: 100%;height: 60px;background-color: #3c3c3c;margin: 0;padding: 0;}
+#title{margin: 0;padding: 0;position: absolute;width: 100%;text-align: center;font-size: 30px;color: #FFFFFF;
+    margin-top: 1%;font-family: "Arial Rounded MT Bold"}
+button { width: 80%;  background-color: #CA9D3F;  color: #FFFFFF;  border-color: red; border-bottom-width: 8px;
+    border-top-width: 0;border-left-width: 0;border-right-width: 0;border-radius: 10px;  }
+#ok { position: absolute; top:10%;  left: 5%;  width: 15%;  }
+.button_word{font-size: 12px;font-family: 'Arial Rounded MT Bold'}
+#rule {  position: absolute;  top:10%;  left: 30%;  width: 15%;  }
+.click_word{font-size: 35px;color: #FFFFFF;margin-left: 50%;margin-top: 1%;font-family: 'Arial Rounded MT Bold'}
+#ranklist {  position: absolute;  top:10%;  left: 75%;  width: 15%;  }
+h3{ font-family: "Arial Rounded MT Bold"}
+#plane {  position: absolute;  top:25%;  left: 3%;  width: 21%;  height: 59%;border:solid 2px #CA9D3F;}
+.plane_div {  position: relative; float: left;width: 45%;height: 30%; margin: 2%;  }
+.plane_div div {  width: 100%;  height: 100%;  color: white;  border: solid 2px #FFFFFF; border-radius: 5px  }
+.plane_img {  width: 99%;  height: 99%;}
+#ruletext { display: none; position: absolute; top: 10%; left: 35%; text-align: center;color: #FFFFFF;
+    font-family: "Arial Rounded MT Bold";
+    width: 30%; height: 40%; border: 5px solid #CA9D3F; border-radius: 5px;background-color: #000000;  z-index:1003;  overflow: auto;}
+#ranktext {  display: none; position: absolute; border: 5px solid #CA9D3F; border-radius: 5px; font-family: "Arial Rounded MT Bold";
+    text-align: center; top: 30%; left: 37%; width: 30%; height: 33%; color: white; z-index: 1003; background-color: black;  }
+#return_button {  width: 30%;  height: 15%; font-size: 20px; }
+#gameDiv {  position: absolute;  top:25%;  left: 32%;  width: 40%; height: 65%;
+    border: solid 1px #CA9D3F;  display: none;  }
+#game { position: absolute; overflow: hidden; width: 100%; height: 100%; }
+#gamebg { position: absolute; width: 100%; 	height: 200%; top: -100%; }
+#user { position: absolute; width: 80px; height: 80px;z-index:1002; }
+#record { position: absolute; width: 30%; height: 30%; top: 60%; left: 3%; text-align: center; color: white; z-index: 1002;  }
+#stop { position: absolute; left: 90%; display: none; z-index: 1003; }
+#stop img { width: 50PX; height: 50px; }
+#over { text-align: center; position: absolute; top: 10%; left: 5%; width: 50%; height: 40%; z-index: 1003; }
+.gameover_word{color: red;font-size: 30px;font-family: 'Arial Rounded MT Bold'}
+#drop { position: absolute; width: 20%; height: 20%;left: 78%; top: 25%; }
+#drop_word {  position: relative; float: left; margin-top: 10%; margin-left: 10%; width: 78%; height: 50%;
+    color: white; font-family: "Arial Rounded MT Bold"; text-align: center;border: dashed 2px green;  }
+#drop_div {  position: relative; width: 78%; height: 140%; float: left; margin-top: 10%; margin-left: 10%;
+    border: dashed 2px #FFFFFF;}

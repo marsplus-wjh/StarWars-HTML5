@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Star Wars</title>
+    <link rel="stylesheet" type="text/css" href="HW4.css">
+</head>
+<body>
+<audio id="music" src="music.mp3" loop="loop"></audio>
+<div id="top">
+    <p id="title">Shooting Game!!</p>
+</div>
+<div id="ok" onclick="ok()">
+    <button><p class="button_word">OK</p></button>
+</div>
+<div id="rule" onclick="rule()">
+    <button><p class="button_word">Click me show Rule</p></button>
+</div>
+<div>
+    <p style="font-size: 35px;color: #FFFFFF;margin-left: 50%;margin-top: 1%;font-family: 'Arial Rounded MT Bold'">Click button!</p>
+</div>
+<div id="ranklist" onclick="ranklist()">
+    <button><p class="button_word">Ranklist</p></button>
+</div>
+<div id="plane">
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane1.png" /></div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane2.png" /></div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane3.png" /></div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane4.png" /></div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane5.png" /></div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane6.png" /></div></div>
+</div>
+<div id="gameDiv" onkeydown="control()" tabindex="0">
+    <div id="over">
+        <p style="color: red;font-size: 30px;font-family: 'Arial Rounded MT Bold'">Game over!!! Click OK to the Next Game!!!</p>
+    </div>
+    <div id="record">
+        <p id="life"></p>
+        <p id="score"></p>
+        <p id="Final"></p>
+    </div>
+    <div id="game">
+        <img id="gamebg" src="images/xingkong.jpg"/>
+        <div id="stop"><img src="images/pause.jpg"/></div>
+        <img id="user" src=""/>
+    </div>
+</div>
+<div id="drop">
+    <div id="drop_word"><p>You can upload enemy's picture below</p> </div>
+    <div id="drop_div"></div>
+</div>
+<div id="ruletext">
+    <p style="font-size: 25px">Star Wars!!!</p>
+    <p>One enemy, one point.</p>
+    <p>One attacked, lose one life point.</p>
+    <p>Surviving 100 meters.</p>
+    <p>Dont be carezy</p>
+    <button id="return_button" onclick="return_button()">Return</button>
+</div>
+<div id="ranktext"></div>
+</body>
+
+
+
+
+
+<script>
+    var rank = [];
+    var Final = 50;
+
+    var m = [];     //di ren
+    var bullet = [];   //zi dan
+    var TimeA,TimeB,TimeE;
+    var life,score,flag;
+    var nowWay;
+    var topEnemy = "images/defalut enemy.png";
+    var leftEnemy = "images/left enemy.png";
+    var rightEnemy = "images/right enemy.png";
+
+
+    function pxToint(a){return parseInt(a.replace('px',''));}
+    function intTopx(a){return a + 'px';}
+    function getStyle(element, attr)
+    {
+        if(element.currentStyle){
+            return element.currentStyle[attr];
+        }else{
+            return window.getComputedStyle(element,null)[attr];
+        }
+    }
+
+    function newImg(left,top,width,height,color,img,op)
+    {
+        var element = document.createElement("img");
+        element.style.position = "absolute";
+        element.style.left = intTopx(left);
+        element.style.top = intTopx(top);
+        element.style.width = intTopx(width);
+        element.style.height = intTopx(height);
+        element.style.backgroundColor = color;
+        if(img) {
+            element.src = img;
+        }
+        element.style['z-index'] = 1002;
+        var game = document.getElementById("game");
+        game.appendChild(element);
+        element.op = op;
+        return element;
+    }
+
+    function selectPlan(element)
+    {
+        var select = document.getElementsByClassName("selected");
+        if(select.length > 0)
+        {
+            select[0].style.border="solid 2px white";
+            select[0].className = "gameover";
+        }
+        element.style.border="solid 3px green";
+        element.className = "selected";
+    }
+
+
+    function ok()
+    {
+        nowWay = Final;
+        life = 1;
+        flag = true;
+        score = 0;
+        if(document.getElementsByClassName("selected").length <= 0)
+        {
+            alert("Are you sure you will filgt by yourself?");
+            return false;
+        }
+        var music = document.getElementById("music");
+        music.play();
+        var stop = document.getElementById("stop");
+        stop.style.display="none";
+        var over = document.getElementById("over")
+        over.style.display = "none";
+        var rank = document.getElementById("ranktext");
+        rank.style.display = "none";
+        var user = document.getElementById("user");
+        var pic = document.getElementsByClassName("selected");
+        user.src = pic[0].childNodes[0].src;
+        user.style.top = "300px";
+        user.style.left = "200px";
+        document.getElementById("gameDiv").style.display = "block";
+        document.getElementById("gameDiv").focus();
+        zidan();
+        for(var i = 0; i < m.length; i++)
+        {
+            m[i].parentNode.removeChild(m[i]);
+            clearInterval(m[i].T);
+        }
+        for(var i = 0; i < bullet.length;i++)
+        {
+            bullet[i].parentNode.removeChild(bullet[i]);
+            clearInterval(bullet[i].T);
+        }
+        m.splice(0,m.length);
+        bullet.splice(0,bullet.length);
+
+        TimeA = record();
+        TimeB = finaldiv();
+        TimeE = makeEnemy();
+        TimeZ = zidan();
+
+
+
+        var dropimg = document.getElementById("drop_img");
+        if(dropimg) {
+            topEnemy = dropimg.src;
+        }
+        var T = setInterval(function(){
+            if(life <= 0 || nowWay <= 0 ||Final <=0)
+            {
+                gameover();
+                clearInterval(T);
+            }
+        },200);
+    }
+    function zidan(){
+        var T = setInterval(function(){
+            var x = pxToint(getStyle(document.getElementById("user"),"left")) + 30;
+            var y = pxToint(getStyle(document.getElementById("user"),"top")) - 15;
+            var ob = newImg(x,y,3,8,"green","",-1);
+            ob.style.borderRadius = "5px";
+            ob.T = shoot(ob);
+            bullet.push(ob);
+        },300);
+    }
+    function shoot(ob)
+    {
+        var T = setInterval(function(){
+            var x = pxToint(getStyle(ob,"top"));
+            for(var i = 0; i < m.length; i++)
+            {
+                var B = m[i];
+                var flag = false;
+                for(var j = 0; j < bullet.length; j++)
+                    if(bullet[j] == ob) flag = true;
+                if(!flag)
+                {
+                    clearInterval(T);
+                    return;
+                }
+                if(Px(B,pxToint(getStyle(ob,"left")),pxToint(getStyle(ob,"top"))))
+                {
+                    score++;
+                    ob.parentNode.removeChild(ob);
+                    m[i].parentNode.removeChild(m[i]);
+                    m.splice(i,1);
+                    for(var j = 0; j < bullet.length; j++)
+                    {
+                        if(bullet[j] == ob)
+                            bullet.splice(j,1);
+                    }
+                    clearInterval(T);
+                    return;
+                }
+            }
+            x -= 10;
+            ob.style.top = intTopx(x);
+        },50);
+        return T;
+    }
+
+    function rule()
+    {
+        pause();
+        document.getElementById("ruletext").style.display ="block";
+    }
+    function ranklist()
+    {
+        pause();
+        var ranktext = document.getElementById("ranktext");
+        ranktext.style.display = "block";
+        rank.sort(function(x,y)
+        {
+            return x.score < y.score;
+        });
+        var html = "<p style='font-size: 20px;color: #CA9D3F;margin-left: 15%'>Name Score Survival</p>";
+        for(var i = 0; i < 3; i++)
+        {
+            if(i < rank.length) {
+                html += "<p>Rank" + (i + 1) + " " + rank[i].name + " " + rank[i].score + " " + (Final - nowWay) + "m";
+            }
+            else {
+                html += "<p>Rank" + (i + 1) + " XXXXXXX 0 0m</p>";
+            }
+
+        }
+        html += "<button id=\"close\" onclick=\"return_button()\" style='width: 80%;height: 15%'>Return</button>";
+        ranktext.innerHTML = html;
+    }
+
+    function return_button()
+    {
+        var ruletext = document.getElementById("ruletext");
+        ruletext.style.display ="none";
+        var runktext = document.getElementById("ranktext");
+        runktext.style.display ="none";
+        var gameDiv = document.getElementById("gameDiv");
+        gameDiv.focus();
+    }
+
+    function control()
+    {
+        var area = document.getElementById("gameDiv");
+        if(getStyle(area,"display") == "none") {
+            return false;
+        }
+        if(!flag && event.keyCode != 32) {
+            return false;
+        }
+        var user = document.getElementById("user");
+        if(event.keyCode == 32){
+            pause();
+        }
+        else if(event.keyCode == 37){
+            var x = pxToint(getStyle(user,"left")) - 20;
+            if(x >= 0){
+                x = x
+            }else{
+                x = 0
+            }
+            user.style.left = intTopx(x);
+            boom();
+        }
+        else if(event.keyCode == 38){
+            var x = pxToint(getStyle(user,"top")) - 20;
+            if(x >= 0){
+                x = x
+            }else {
+                x = 0
+            }
+            user.style.top = intTopx(x);
+            boom();}
+        else if(event.keyCode == 39){
+            var x = pxToint(getStyle(user,"left")) + 20;
+            if(x >= 450){
+                x = 450
+            }else{
+                x = x
+            }
+            user.style.left = intTopx(x);
+            boom();
+        }
+        else if(event.keyCode == 40){
+            var x = pxToint(getStyle(user,"top")) + 20;
+            if(x >= 400){
+                x = 400
+            }else{
+                x = x
+            }
+            user.style.top = intTopx(x);
+            boom();
+        }
+        else if(event.keyCode == 82){
+            ok();
+        }
+    }
+    function Px(ob,x,y)
+    {
+        if(x > (pxToint(getStyle(ob,"left")) + pxToint(getStyle(ob,"width")))){
+            return false;
+        }
+        if(x < pxToint(getStyle(ob,"left"))){
+            return false;
+        }
+        if(y > (pxToint(getStyle(ob,"top")) + pxToint(getStyle(ob,"height")))){
+            return false;
+        }
+        if(y < pxToint(getStyle(ob,"top"))){
+            return false;
+        }
+        return true;
+    }
+    function boom()
+    {
+        for(var i = 0; i < m.length; i++)
+        {
+            var user = document.getElementById("user");
+            if(Px(user,pxToint(getStyle(m[i],"left")),pxToint(getStyle(m[i],"top"))))
+            {
+                life--;
+                m[i].parentNode.removeChild(m[i]);
+                clearInterval(m[i].T);
+                m.splice(i,1);
+            }
+        }
+    }
+
+    function finaldiv()
+    {
+        var T = setInterval(function(){
+            var x = pxToint(getStyle(gamebg,"top"));
+            x += 5;
+            nowWay--;
+        },200)
+        return T;
+    }
+
+    function makeEnemy()
+    {
+        T = setInterval(function(){
+            var x = Math.round(Math.random() * 10) % 3;
+            if(x == 0){
+                var i = Math.round(Math.random() * 10);
+                var enemy1 = new newImg(70 * i,0,60,60,"",topEnemy,0);
+                var ob = enemy1;
+                ob.T = T
+                var T = setInterval(function(){
+                    var x = pxToint(getStyle(ob,"top"));
+                    if(x >= 480)
+                    {
+                        clearInterval(T);
+                        ob.parentNode.removeChild(ob);
+                        for(var i = 0; i < m.length; i++)
+                        {
+                            if(m[i] == ob)
+                                m.splice(i,1);
+                        }
+                        return;
+                    }
+                    x += 4;
+                    ob.style.top = intTopx(x);
+                },100);
+                m.push(ob);
+            }
+            else if(x == 1){
+                var i = Math.round(Math.random() * 10);
+                var enemy2 = new newImg(0,40 * i,40,40,"",leftEnemy,1);
+                var ob = enemy2;
+                ob.T = T;
+                var T = setInterval(function () {
+                    var x = pxToint(getStyle(ob, "left"));
+                    if (x >= 500) {
+                        clearInterval(T);
+                        ob.parentNode.removeChild(ob);
+                        for (var i = 0; i < m.length; i++) {
+                            if (m[i] == ob)
+                                m.splice(i, 1);
+                        }
+                        return;
+                    }
+                    x += 5;
+                    ob.style.left = intTopx(x);
+                    return T;
+                }, 150);
+                m.push(ob);
+            }
+            else if(x == 2){
+                var i = Math.round(Math.random() * 10);
+                var enemy3 = new newImg(410,40 * i,40,40,"",rightEnemy,2);
+                var ob = enemy3;
+                ob.T = T;
+                var T = setInterval(function(){
+                    var x = pxToint(getStyle(ob,"left"));
+                    if(x <= -40)
+                    {
+                        clearInterval(T);
+                        ob.parentNode.removeChild(ob);
+                        for(var i = 0; i < m.length; i++)
+                        {
+                            if(m[i] == ob)
+                                m.splice(i,1);
+                        }
+                        return;
+                    }
+                    x -= 5;
+                    ob.style.left = intTopx(x);
+                },150);
+                m.push(ob);
+            }
+        },1200);
+        return T;
+    }
+
+    function pause()
+    {
+        if(!flag)
+        {
+            TimeA = record();
+            TimeB = finaldiv();
+            TimeE = makeEnemy();
+            TimeZ = zidan();
+        }
+        else
+        {
+            var stop = document.getElementById("stop");
+            stop.style.display="block";
+            clearInterval(TimeA);
+            clearInterval(TimeB);
+            clearInterval(TimeE);
+            clearInterval(TimeZ);
+        }
+        flag = flag == true ? false : true;
+    }
+
+    function gameover()
+    {
+        pause();
+        document.getElementById("over").style.display = "block";
+        var user = new Object();
+        user.name = prompt("You get " + score + " point(s). Please input your name:");
+        user.score = score;
+        rank.push(user);
+    }
+
+
+    function record()
+    {
+        var T = setInterval(function(){
+            var li = document.getElementById("life");
+            li .innerHTML = "Life: " + life + " / 5";
+            var sc = document.getElementById("score");
+            sc.innerHTML = "Score: " + score;
+            var final = document.getElementById("Final");
+            final.innerHTML = "Final: " + nowWay;
+        },100);
+        return T;
+    }
+
+
+//
+//    function dragOver(img)
+//    {
+//        img.stopPropagation();
+//        img.preventDefault();
+//    }
+//    function drop(evt)
+//    {
+//        document.getElementById("drop_div").innerHTML="";
+//        evt.stopPropagation();
+//        evt.preventDefault();
+//        var file = evt.dataTransfer.files;
+//        var reader = new FileReader();
+//        reader.onload = (function(theFile) {
+//            return function(e) {
+//                var span = document.createElement('span');
+//                span.innerHTML = ['<img style="width: 70%; height: 70%; margin-left:15%; margin-top: 15%" id=\"drop_img\" src="', e.target.result,
+//                    '" title="', theFile.name, '"/>'].join('');
+//                document.getElementById('drop_div').appendChild(span);
+//            };
+//        })(file[0]);
+//        reader.readAsDataURL(file[0]);
+//    }
+//    var dropZone = document.getElementById("drop_div");
+//    dropZone.addEventListener('dragover',dragOver,false);
+//    dropZone.addEventListener('drop',drop,false);
+    function drop(img)
+    {
+        var drop = document.getElementById("drop_div");
+        drop.innerHTML="";
+        img.stopPropagation();
+        img.preventDefault();
+        var file = img.dataTransfer.files;
+        var reader = new FileReader();
+        reader.onload = (function(theFile) {
+            return function(e) {
+                var span = document.createElement('span');
+                span.innerHTML = ['<img style="width: 70%; height: 70%; margin-left:15%; margin-top: 15%" id=\"drop_img\" src="', e.target.result,
+                    '" title="', theFile.name, '"/>'].join('');
+                document.getElementById('drop_div').appendChild(span);
+            };
+        })(file[0]);
+        reader.readAsDataURL(file[0]);
+    }
+    function dragOver(img)
+    {
+        img.stopPropagation();
+        img.preventDefault();
+    }
+    var dropbox = document.getElementById("drop_div");
+    dropbox.addEventListener('dragover',dragOver,false);
+    dropbox.addEventListener('drop',drop,false);
+
+</script>
+</html>

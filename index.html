@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Star Wars</title>
+    <link rel="stylesheet" type="text/css" href="HW4.css">
+    <script type="text/javascript" src="HW4.js"></script>
+</head>
+<body>
+<audio id="music" src="music.mp3" loop="loop"></audio>
+<div id="top">
+    <p id="title">Shooting Game!!</p>
+</div>
+<div id="ok" onclick="ok()">
+    <button><p class="button_word">OK</p></button>
+</div>
+<div id="rule" onclick="rule()">
+    <button><p class="button_word">Click me show Rule</p></button>
+</div>
+<div>
+    <p class="click_word">Click button!</p>
+</div>
+<div id="ranklist" onclick="ranklist()">
+    <button><p class="button_word">Ranklist</p></button>
+</div>
+
+
+
+
+
+<div id="plane">
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane1.png" />
+    </div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane2.png" />
+    </div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane3.png" />
+    </div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane4.png" />
+    </div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane5.png" />
+    </div></div>
+    <div class="plane_div"><div onclick="selectPlan(this)"><img class="plane_img" src="images/plane6.png" />
+    </div></div>
+</div>
+<div id="gameDiv" onkeydown="control()" tabindex="0">
+    <div id="record">
+        <p id="life"></p>
+        <p id="score"></p>
+        <p id="Final"></p>
+    </div>
+    <div id="game">
+        <img id="gamebg" src="images/xingkong.jpg"/>
+        <div id="stop"><img src="images/pause.jpg"/></div>
+        <img id="user" src=""/>
+    </div>
+    <div id="over">
+        <p class="gameover_word">Game over!!! Click OK to the Next Game!!!</p>
+    </div>
+</div>
+<div id="ruletext">
+    <p style="font-size: 25px">Star Wars!!!</p>
+    <p>One enemy, one point.</p>
+    <p>One attacked, lose one life point.</p>
+    <p>Surviving 100 meters.</p>
+    <p>Dont be crazy.</p>
+    <button id="return_button" onclick="return_button()">Return</button>
+</div>
+<div id="ranktext"></div>
+<div id="drop">
+    <div id="drop_word"><p>You can upload enemy's picture below</p> </div>
+    <div id="drop_div"></div>
+</div>
+</body>
+
+<script>
+    function drop(img)
+{
+    var drop = document.getElementById("drop_div");
+    drop.innerHTML="";
+    img.stopPropagation();
+    img.preventDefault();
+    var file = img.dataTransfer.files;
+    var reader = new FileReader();
+    reader.onload = (function(theFile) {
+        return function(e) {
+            var span = document.createElement('span');
+            span.innerHTML = ['<img style="width: 70%; height: 70%; margin-left:15%; margin-top: 15%" id=\"drop_img\" src="', e.target.result,
+                '" title="', theFile.name, '"/>'].join('');
+            document.getElementById('drop_div').appendChild(span);
+        };
+    })(file[0]);
+    reader.readAsDataURL(file[0]);
+}
+function dragOver(img)
+{
+    img.stopPropagation();
+    img.preventDefault();
+}
+var dropbox = document.getElementById("drop_div");
+dropbox.addEventListener('dragover',dragOver,false);
+dropbox.addEventListener('drop',drop,false);
+</script>
+</html>
